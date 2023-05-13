@@ -1,0 +1,83 @@
+create table if not exists Mensagem(
+numero_msg char(8) not null,
+mes_msg char(3) not null,
+ano_msg year not null,
+origem varchar(10),
+destino varchar(10),
+assunto varchar (80),
+recebida char(3) check (recebida='sim' or recebida='nao'),
+transmitida char(3) check (transmitida='sim' or transmitida='nao'),
+referencia varchar(20),
+primary key (numero_msg,mes_msg);
+
+create table if not exists Departamento(
+id_dep int not null auto_increment primary key,
+sigla_dep varchar(8) not null,
+descricao_dep varchar(20));
+
+create table if not exists Curso(
+id_curso int not null auto_increment primary key,
+sigla_curso varchar(20) not null,
+nome_curso varchar(50) not null,
+descricao_curso varchar(100),
+local_curso varchar(15) not null,
+modalidade_curso varchar(5));
+
+
+create table Militar(
+nip char(10) not null primary key,
+posto_grad varchar(8) not null,
+especialidade varchar(8),
+subespecialidade varchar(5),
+nome_guerra varchar(20),
+nome_completo varchar(50) not null,
+e_mail varchar(30),
+idDepartamento int,
+constraint fk_Militar_departamento_id_dep
+foreign key (idDepartamento)
+references Departamento (id_dep)
+on delete set null
+on update cascade);
+
+
+create table if not exists Inscricao_Curso(
+data_inicio date not null,
+data_fim date not null,
+numeroMsg char(8),
+mesMsg char(3),
+anoMsg year not null,
+nipMilitar char(10),
+idCurso int,
+constraint fk_Inscricao_mensagem_numero_msg
+	foreign key (numeroMsg,mesMsg)
+	references Mensagem (numero_msg,mes_msg)
+	on delete set null
+	on update cascade,
+constraint fk_Inscricao_militar_nip
+	foreign key (nipMilitar)
+	references Militar (nip)
+	on delete set null
+	on update cascade,
+constraint fk_Inscricao_curso_id_curso
+	foreign key (idCurso)
+	references Curso (id_curso)
+	on delete set null
+	on update cascade);
+
+create table if not exists Ficha_Adestramento(
+nip_militar char(10),
+id_Curso int,
+ano_curso year,
+os_pub varchar(25) not null,
+bol_pub varchar(25),
+constraint fk_ficha_militar_nip
+	foreign key (nip_militar)
+	references Militar (nip)
+	on delete set null
+	on update cascade,
+constraint fk_ficha_curso_id_curso
+	foreign key (id_Curso)
+	references Curso(id_curso)
+	on delete set null
+	on update cascade);
+
